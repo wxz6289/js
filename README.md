@@ -1,184 +1,105 @@
-# JavaScript
+# JavaScript Practice Lab
 
-- 作用域与闭包
-- this和原型
-- 类型和语法
-- 异步与性能
+A structured collection of JavaScript study notes, exercises, and practice code covering fundamental to advanced topics.
 
-JavaScript 是一种具有函数优先的**轻量级解释型**语言,它是一种基于**原型**编程、多范式的动态脚本语言，并且支持面向对象、命令式和声明式风格。
+## Structure
 
-在页面加入 JS 的方式
+### 01-basics — Language Fundamentals
+- **variables/** — var/let/const, hoisting, TDZ, block scope
+- **types/** — 7 built-in types, typeof, strings, numbers, Date, JSON, booleans
+- **coercion/** — explicit/implicit coercion, ToString/ToNumber/ToBoolean
+- **operators/** — operator precedence table, all operator categories
+- **statements/** — if/switch, labels, with, loops
 
-1. 内部 JavaScript
-2. 外部 JavaScript
-   - async 遇到 JS 元素不中断 HTML 内容解析也即是不阻塞页面渲染，但脚本的执行顺序无法控制，只适合彼此独立的脚本
-   - defer 按照脚本在页面中出现的顺序加载和运行
-3. 内联 JavaScript 不建议使用
+### 02-functions — Functions
+- **core/** — declarations, expressions, params, IIFE, constructor, name/length/caller
+- **closures/** — closures, lexical scope, block scope
+- **this-binding/** — 4 binding rules, arrow functions, call/apply/bind
+- **iterators/** — Iterable/Iterator protocol, custom iterables
+- **generators/** — yield, pause/resume, passValue
+- **decorators/** — debounce (leading + trailing), throttle (simple + smart), spy, delay
+- **currying/** — function currying and partial application
+- **callbacks/** — callback patterns, Promise implementation principles
+- **fn-prototype/** — function prototype properties and methods
 
-DOMContentLoaded 事件 HTML 文档加载、解释完毕事件。
-配置 Babel
+### 03-objects — Objects & Prototypes
+- **objects/** — creation, property descriptors, getter/setter, enumeration
+- **map-set/** — Map, Set, WeakMap, WeakSet
+- **prototypes/** — prototype chain, 6 inheritance patterns
+- **class/** — ES6 class syntax, extends, static, private fields
+- **proxy-reflect/** — ES6 Proxy and Reflect API
+- **mixin/** — Mixin pattern
 
-1. `@babel/core`
-2. 配置`.bebalrc`
-   1. presets @babel/preset-env @babel/preset-react
-   2. plugins
+### 04-async — Async Programming
+- **promise/** — Promise API, chaining, combinators (all/race/allSettled/any)
+- **async-await/** — async/await, async generators, asyncify
+- **timers/** — setTimeout, setInterval, requestAnimationFrame
 
-命令行 babel
-@babel/cli
--o/--out-file 指定输出文件
--d/--out-dir 指定输出目录
--s 生成 source map 文件
+### 05-modules — Module Systems
+ES Modules + CommonJS: named/default exports, dynamic import, circular dependencies
 
-支持 REPL
-babel-node
-@babel/node
+### 06-browser — Browser Platform
+- **dom/** — DOM API and manipulation
+- **event-loop/** — browser event loop
+- **client-storage/** — Cookie, LocalStorage, SessionStorage, IndexedDB
+- **multithreading/** — Web Worker, Shared Worker, Service Worker, Atomics, SharedArrayBuffer
+- **rendering/** — rendering pipeline, RAF, RIC, performance optimization, Fetch API
+- **script-loading/** — defer/async, dynamic script loading
+- **gc/** — mark-and-sweep, reference counting
+- **cross-platform/** — runtime/platform detection strategies
 
-register
-@babel/register 对 require 命令的改写 注意：它只对 require 的文件转码而不会对当前文件转码，并且是实时转码，只适合开发环境
+### 07-patterns — Design Patterns & Algorithms
+- **creational/** — Factory, Abstract Factory, Builder, Prototype, Singleton
+- **structural/** — Adapter, Composite, Decorator, Facade, Module
+- **behavioral/** — Chain of Responsibility, Mediator, Proxy
+- **algorithms/** — quick sort, radix sort, coin change, Redux-like store
 
-polyfill
-@babel/polyfill
+### 08-metaprogramming — Meta Programming
+Symbol, new.target, toPrimitive, well-known symbols
 
-Traceure
+### 09-regex — Regular Expressions & Encoding
+Comprehensive regex reference, Unicode character encoding
 
-函数是代码执行的主要模块化单元。
-函数是第一类型对象(first class object)
-js 中对象具有的功能：
+### 10-webassembly — WebAssembly
+WASM basics, AssemblyScript examples
 
-- 可以通过字面创建
-- 可以赋值给变量、数组或对象的属性
-- 可以作为参数传递给函数
-- 可以作为函数返回值
-- 拥有动态创建并赋值的属性
-  函数除具有对象所有的功能，还具有被调用的功能。
+### 11-utils — Utility Functions
+Code snippets: sleep, call polyfill, debounce, throttle, version compare, and more
 
-浏览器事件轮询
-浏览器负责事件的轮询和派发，我们主要负责建立浏览器中各种事件处理程序，这些事件触发时会被放置到事件队列中去，然后浏览器会去调用与事件关联的事件处理程序。浏览器中事件轮询是单线程的。每个事件都是按找事件所放置的位置顺序进行处理。每个事件都在自己的生命周期内进行处理，所有其他事件必须等到这个事件处理结束后才能继续处理。在任何情况下，单线程都不能同时执行两个处理程序。另外要注意的是浏览器把事件放到队列的机制是在事件轮询模型之外。确定事件何时发生并把他们放到事件队列上的过程所处的线程，并不参与事件本身的处理。
+### 12-arrays — Array Operations
+Array creation, iteration, searching, sorting, deduplication
 
-回调函数： 预先创建稍后执行的函数，它是高效利用 js 必不可少的一部分。
+### 14-strict-mode — Strict Mode
+Strict mode rules and behavior
 
-函数声明是使用函数字面量进行声明从而创建值。在任何地方都可以创建函数，函数可以作为值进行引用，还可以作为基础构件在代码库中重用。
+### 15-examples — Comprehensive Examples
+Cross-cutting HTML + JS examples
 
-函数字面量由四部分组成
+### JavaScript权威指南 — Book Notes (7th Edition)
+Complete chapter-by-chapter study notes from "JavaScript: The Definitive Guide" (7th Ed, 2020)
+- **ch01-简介** — Language overview, version history (ES3→ES2020)
+- **ch02-词法结构** — Unicode, identifiers, comments, ASI
+- **ch03-类型值和变量** — 7 primitive types, type coercion, destructuring
+- **ch04-表达式与运算符** — Operator precedence table, all operator categories
+- **ch05-语句** — Conditionals, loops, jumps, strict mode (`code/`)
+- **ch06-对象** — Creation, property descriptors, getters/setters, enumeration
+- **ch07-数组** — Stack/queue methods, iteration, search/sort, typed arrays
+- **ch08-函数** — Definitions, invocation patterns, closures, memoization (`code/`)
+- **ch09-类** — Class syntax, inheritance, private fields, instanceof
+- **ch10-模块** — ES Modules vs CommonJS, dynamic import, HTML integration
+- **ch11-标准库** — Set/Map/WeakMap, TypedArrays, Date, JSON, Intl, URL (`code/`)
+- **ch12-迭代器与生成器** — Iterable protocol, generators, async iteration
+- **ch13-异步JavaScript** — Event loop, Promise combinators, async/await
+- **ch14-元编程** — Well-known Symbols, Proxy/Reflect, new.target
+- **ch15-浏览器中的JavaScript** — DOM, events, storage, workers, rendering
+- **ch16-Node.js中的JavaScript** — Core modules, CommonJS, npm, EventEmitter
+- **ch17-工具与扩展** — Babel, TypeScript, bundlers, linters, source maps
 
-- function 关键字
-- 函数名(可选)
-- 参数列表(可选，空参数列必须保留括号)
-- 函数体 (空函数体必须保留大括号)
+### javascript-info — Tutorial Reference (zh.javascript.info)
+Structured reference notes following the site's 3-part curriculum:
+- **part1-language/** — 13 sections: fundamentals, objects, data types, advanced functions, prototypes, classes, error handling, promises, generators, modules
+- **part2-browser/** — 6 sections: Document, Events, UI Events, Forms, Loading, Misc
+- **part3-extra/** — 7 sections: Frames, Binary Data, Network, Storage, Animation, Web Components, Regex
 
-函数作用域
-
-- var 变量声明的作用域始于函数声明结束于函数结尾，与代码嵌套无关
-- 具名函数的作用域是指声明该函数的整个函数范围；
-- 内部函数函数在当前函数的任何地方都可以用(函数提升)
-- 对于作用域声明，全局上下文就像包含所有代码的超大函数。
-
-所有函数的最外层被称为全局作用域。 在全局作用域内定义的值可以在任意地方访问。
-
-函数调用
-
-1. 作为函数进行调用
-2. 作为对象的方法进行调用
-3. 作为构造函数调用，创建一个对象
-4. 通 call 或 apply 方法调用
-   所有的调用都会传递两个隐式参数：`this`和`arguments`。
-5. arguments 是传递给函数的所有参数的集合，它是一个类数组结构，具有 length 属性还可以使用 for 遍历，但它不具备数组的方法。
-6. this 参数引用了与调用该函数的相关联的上下文对象。this 的指向依赖于调用方式不像 Java 依赖于声明。
-
-- 作为函数调用，其 this 指向函数调用的环境，若在全局环境中调用则指向全局对象；
-- 作为方法调用，this 指向调用这个方法的对象。
-- 函数作为构造器调用是 js 的一个超级特性，其 this 指向构造函数创建出来的新实例。构造器调用时发生的特殊行为：
-  - 创建一个新的空对象；
-  - 传递给构造函数的对象是 this 参数，从而成为构造器的函数的上下文；
-  - 如果没有显示的返回值，新建的对象则作为构造器的返回值返回。
-    构造器的目的是要创建一个新对象并对其进行设置，然后将其作为构造器的返回值返回。调用构造函数的目的是通过调用函数初始化创建的新对象。
-- 通过 call()或 apply()调用 第一个参数指定调用函数的上下文对象，其后的参数是被调用函数的传参，call()的传参是参数列表表，apply()的传参是参数组成的数组。
-
-匿名函数 用完就弃，不需要引用
-
-函数可以有`属性`，也可以有`方法`，可以`分配给变量和属性`，也可以享有普通对象拥有的特性，而且还有一个超级特性：它可以被调用。
-
-变量 用于存放数值的容器，变量不是数值本身，其独特之处是存放的数值是可变的。
-声明变量也就是创建变量。
-
-初始化变量 也即是变量赋值 `=` var 声明的变量其初始化可以在声明之后(顶置) 对未声明的变量执行赋值操作会创建全局变量。
-
-var 声明变量无论发生在何处，都在执行任何代码之前进行处理。用 var 声明的变量的作用域是它当前的执行上下文，它可以是嵌套的函数，也可以是声明在任何函数外的变量。如果你重新声明一个 JavaScript 变量，它将不会丢失其值。将赋值给未声明变量的值在执行赋值时将其隐式地创建为全局变量（它将成为全局对象的属性）。声明和未声明变量之间的差异是：
-
-1. 声明变量的作用域限制在其声明位置的上下文中，而非声明变量总是全局的。
-2. 声明变量在任何代码执行前创建，而非声明变量只有在执行赋值操作的时候才会被创建。
-3. 声明变量是它所在上下文环境的不可配置属性，非声明变量是可配置的（如非声明变量可以被删除）。
-   无论它们是在函数还是全局作用域内，应该始终声明变量。 ES5 严格模式下，分配给未声明的变量会引发错误。
-
-变量提升
-由于变量声明（以及其他声明）总是在任意代码执行之前处理的，所以在代码中的任意位置声明变量总是等效于在代码开头声明。也即是变量可以在声明之前使用，就像是把所有的变量声明移动到函数或者全局代码的开头位置。
-因此，建议始终在作用域顶部声明变量（全局代码的顶部和函数代码的顶部），这样可以清楚知道哪些变量是函数作用域（本地），哪些变量在作用域链上解决。重要的是，提升将影响变量声明，而不会影响其值的初始化。
-
-更新变量
-
-变量命名规则：
-
-1. 必须仅包含字母、数字和符号`$`、`_`,区分大小写;
-2. 首字符必须非数字;
-3. 必须非关键字或保留字。
-
-变量类型
-
-1. Number
-2. String
-3. Boolean
-4. Array
-5. Object 对象是现实生活中的事物模型的一种代码结构。
-
-typeof() 返回变量的数据类型 对未声明的变量返回`undefined`而不是报错
-
-动态类型
-
-语法错误
-逻辑错误
-运算符
-
-- 算术运算符
-- 递增和递减运算符
-- 操作运算符
-- 比较运算符
-  运算符优先级 决定了表达式中运算执行的先后顺序，优先级高的运算符最先被执行
-  结合性 决定了拥有相同优先级的运算符的执行顺序
-  （）-> .|[]|new(带参数列表)|函数调用-> new(无参数列表)(右结合性) -> 后置递增|后置递减 ->
-  !(逻辑非)|~(按位非)|+(一元运算)|-(一元运算)|++(前置递增)|--(前置递减)|typeof|void|delete|await| -> \*_->
-  算术运算 -> 位移运算 -> 比较运算|in|instanceof -> 等于运算 -> 位运算(& -> ^ -> | ) -> 逻辑运算(&& -> ||) -> 条件运算 -> 赋值运算 -> yiled|yiled_ -> ...(展开运算符) -> ,
-  [运算符优先级汇总表](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence)
-
-条件语句
-
-- if
-- else if
-- else
-- switch case break continue default
-  falsy 值：false、undefined、null、0、''
-
-循环语句
-for
-while
-do while
-break 退出循环
-continue 跳过迭代
-
-函数声明
-
-1. 字面量形式
-2. 函数表达式
-3. 构造函数形式
-   函数表达式和函数声明非常相似，它们甚至有相同的语法（查看函数表达式了解详情）。一个函数表达式可能是一个更大的表达式的一部分。可以定义函数“名字”（例如可以在调用堆栈时使用）或者使用“匿名”函数。函数表达式不会提升，所以不能在定义之前调用。
-
-函数声明提升 JavaScript 中的函数表达式没有提升,不像函数声明,你在定义函数表达式之前不能使用函数表达式。
-命名函数表达式 如果你想在函数体内部引用当前函数，则需要创建一个命名函数表达式。然后函数名称将会（且只会）作为函数体（作用域内）的本地变量。这样也可以避免使用非标准的 arguments.callee 属性。
-被函数表达式赋值的那个变量会有一个 name 属性，如果你把这个变量赋值给另一个变量的话，这个 name 属性的值也不会改变。如果函数是一个匿名函数，那 name 属性的值就是被赋值的变量的名称（隐藏值）。如果函数不是匿名的话，那 name 属性的值就是这个函数的名称（显性值）。这对于箭头函数也同样适用（箭头函数没有名字，所以你只能赋予 name 属性一个隐性名）
-
-函数调用
-
-调用函数时，传递给函数的值被称为函数的实参（值传递），对应位置的函数参数名叫作形参。如果实参是一个包含原始值(数字，字符串，布尔值)的变量，则就算函数在内部改变了对应形参的值，返回后，该实参变量的值也不会改变。如果实参是一个对象引用，则对应形参会和该实参指向同一个对象。假如函数在内部改变了对应形参的值，返回后，实参指向的对象的值也会改变。
-在函数执行时，this 关键字并不会指向正在运行的函数本身，而是指向调用该函数的对象。所以，如果你想在函数内部获取函数自身的引用，只能使用函数名或者使用 arguments.callee 属性(严格模式下不可用)，如果该函数是一个匿名函数,则你只能使用后者。
-
-- Array.from 同时适用于类数组对象和可遍历对象。
-- Spread 操作符只能操作可遍历对象。
+### notebooks — Jupyter Notebooks
+All `.nnb` notebook files consolidated in one place for easy browsing
