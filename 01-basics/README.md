@@ -4,7 +4,7 @@ JavaScript 语言基础笔记与实践代码。
 
 ```
 01-basics/
-├── docs/    # 学习笔记（12 篇）
+├── docs/    # 学习笔记
 └── code/    # 可运行示例（27 个）
 ```
 
@@ -14,16 +14,9 @@ JavaScript 语言基础笔记与实践代码。
 |------|------|------|
 | 词法 | [grammar.md](docs/grammar.md) | 词法结构、表达式与语句、ASI |
 | 变量 | [声明与提升.md](docs/声明与提升.md) | var / let / const、提升、TDZ、块级作用域 |
-| 类型 | [数据类型.md](docs/数据类型.md) | 七种内置类型、数组、Symbol、值与引用 |
-| 类型 | [type.md](docs/type.md) | 基本类型与对象类型概览 |
-| 类型 | [number.md](docs/number.md) | IEEE-754、进制、取整与检测 |
-| 类型 | [string.md](docs/string.md) | 字符串 API 与操作 |
-| 类型 | [date.md](docs/date.md) | Date 创建、访问与设置 |
-| 类型 | [json.md](docs/json.md) | JSON.stringify / parse |
-| 转换 | [类型转换.md](docs/类型转换.md) | typeof、运算符强制转换 |
-| 转换 | [强制类型转换.md](docs/强制类型转换.md) | ToString / ToNumber / ToBoolean |
-| 运算符 | [运算符.md](docs/运算符.md) | 优先级表与常用技巧 |
-| 语句 | [语句.md](docs/语句.md) | 标签、break、with |
+| 类型 | [types.md](docs/types.md) | 内置类型、Number/String/Date、类型转换、JSON、值与引用 |
+| 运算符 | [运算符.md](docs/运算符.md) | 表达式、运算符分类、优先级与结合性 |
+| 语句 | [语句.md](docs/语句.md) | 条件/循环/跳转、标签、try/catch、with |
 
 ## 代码（code/）
 
