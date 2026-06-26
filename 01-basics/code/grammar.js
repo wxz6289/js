@@ -3,11 +3,7 @@ a = eval(`if(true) {
     b = 4 + 12;
 }`);
 
-/* a = do {
-    if(true) {
-        b = 12 + 3;
-    }
-}; */
+console.log(a, b);
 
 var name = "King";
 name.age = 23;
