@@ -1,4 +1,4 @@
-var  user = {
+const  user = {
     isAdmin: function() {
         return !!this.admin;
     }

@@ -1,40 +1,52 @@
-// 某月的最后一天？
-function getLastDayOfMonth(year, month){
-    let d = new Date(year, month + 1, 0);
-  //  d.setDate(d.getDate() - 1)
-    return d.getDate();
+// 获取某月最后一天（month 为 0 起始，与 Date 一致）
+function getLastDayOfMonth(year, month) {
+  return new Date(year, month + 1, 0).getDate();
 }
 
-console.log(getLastDayOfMonth(2012,1));
-console.log(getLastDayOfMonth(2019, 9));
-
-
-function getScondsToday(){
-    let curent = Date.now();
-    let today = new Date();
-    let temp = new Date(today.getFullYear(), today.getMonth(), today.getDate(),0,0,0);
-    return Math.ceil((curent - temp.getTime())/1000);
+// 今天 0 点至今经过的秒数
+function getSecondsToday() {
+  const now = new Date();
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.floor((Date.now() - startOfDay.getTime()) / 1000);
 }
 
-console.log(getScondsToday());
+function pad2(n) {
+  return String(n).padStart(2, '0');
+}
 
-/* 
-写一个函数 formatDate(date)，能够将 date 格式化如下：
+// 相对时间：<1 秒「刚刚」；<1 分钟「n 秒之前」；<1 小时「n 分钟之前」
+// 否则输出 DD.MM.YY HH:mm（本地时区，两位数补零）
+function formatDate(date) {
+  const diff = Date.now() - date.getTime();
+  const second = 1000;
+  const minute = 60 * second;
+  const hour = 60 * minute;
 
-如果 date 距离现在少于 1 秒，输出 "刚刚"。
-否则，如果少于 1 分钟，输出 "n 秒之前"。
-否则，如果少于 1 小时，输出 "n 分钟之前"。
-否则，输出完整日期，用格式"DD.MM.YY HH:mm"。即："day.month.year hours:minutes"，所有的数都用两位数表示，例如：31.12.16 10:00。
+  if (diff < second) {
+    return '刚刚';
+  }
+  if (diff < minute) {
+    return `${Math.floor(diff / second)} 秒之前`;
+  }
+  if (diff < hour) {
+    return `${Math.floor(diff / minute)} 分钟之前`;
+  }
 
-举个例子：
+  const day = pad2(date.getDate());
+  const month = pad2(date.getMonth() + 1);
+  const year = pad2(date.getFullYear() % 100);
+  const hours = pad2(date.getHours());
+  const minutes = pad2(date.getMinutes());
 
-alert( formatDate(new Date(new Date - 1)) ); // "right now"
+  return `${day}.${month}.${year} ${hours}:${minutes}`;
+}
 
-alert( formatDate(new Date(new Date - 30 * 1000)) ); // "30 sec. ago"
+console.log(getLastDayOfMonth(2012, 1));  // 2012-02 闰年 → 29
+console.log(getLastDayOfMonth(2019, 9));  // 2019-10 → 31
 
-alert( formatDate(new Date(new Date - 5 * 60 * 1000)) ); // "5 min. ago"
+console.log(getSecondsToday());
 
-// yesterday's date like 31.12.2016, 20:00
-alert( formatDate(new Date(new Date - 86400 * 1000)) );
-
-*/
+console.log(formatDate(new Date(Date.now() - 500)));           // 刚刚
+console.log(formatDate(new Date(Date.now() - 30 * 1000)));     // 30 秒之前
+console.log(formatDate(new Date(Date.now() - 5 * 60 * 1000))); // 5 分钟之前
+console.log(formatDate(new Date(Date.now() - 86400 * 1000)));  // 完整日期

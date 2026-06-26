@@ -1,91 +1,76 @@
-var  GradientFactory = (function(){
-    var _begininColor = {
-        red: 0,
-        green: 0,
-        blue: 0
-    };
-    var _endColor = {
-        red: 255,
-        green: 255,
-        blue: 255
-    };
-    var _colorStops = 24;
-    var _colors = [];
-    var _colorKeys = ["red", "green", "blue"];
-    var _rgbToHex = function (r, g, b) {
-         return '#' + _byteToHex(r) + _byteToHex(g) + _byteToHex(b);
-    };
-    var _byteToHex = function(n){
-        var hexVals = "0123456789ABCDEF";
-        return String(hexVals.substr((n >> 4) & 0x0F,1)) + hexVals.substr(n & 0x0F,1);
-    };
-   
-    var _parseColor = function(color) {
-        if((color).toString() === "[object Object]") {
-            return color;
-        } else {
-            color =(color.charAt(0) == '#')? color.substring(1,7): color;
-            return {
-                red: parseInt((color).substring(0,2), 16),
-                green: parseInt((color).substring(2,4), 16),
-                blue: parseInt((color).substring(4,6), 16)
-            };
-        }
-    };
+const GradientFactory = (function () {
+  const COLOR_KEYS = ['red', 'green', 'blue'];
+  const HEX_CHARS = '0123456789ABCDEF';
 
-    var _generate = function(opts) {
-        var _colors = [];
-        var options = opts || {};
-        var diff = {
-            red: 0,
-            green: 0,
-            blue: 0
-        };
-        var len = _colorKeys.length;
-        var pOffset = 0;
-        if(typeof (options.form) !=='undefined') {
-            _beginColor = _parseColor(options.form);
-        }
-        if(typeof (options.to) !== 'undefined') {
-            _endColor = _parseColor(options.to);
-        }
-        if(typeof(options.stops) !== 'undefined') {
-            _colorStop = options.stops;
-        }
+  const DEFAULT_BEGIN = { red: 0, green: 0, blue: 0 };
+  const DEFAULT_END = { red: 255, green: 255, blue: 255 };
+  const DEFAULT_STOPS = 24;
 
-        _colorStops = Math.max(1, _colorStops -1);
-        for( var x =0; x < _colorStops; x++) {
-            pOffset = parseFloat(x, 10) / _colorStops;
-            for(var y = 0; y < len; y++) {
-                diff[_colorKeys[y]] = _endColor[_colorKeys[y]] - _begininColor[_colorKeys[y]];
-                diff[_colorKeys[y]] = (diff[_colorKeys[y]] * pOffset) + _begininColor[_colorKeys[y]];
-            }
-            _colors.push(_rgbToHex(diff.red, diff.green, diff.blue));
-        }
-        _colors.push(_rgbToHex(_endColor.red, _endColor.green, _endColor.blue));
-        return _colors;
-    };
+  function byteToHex(n) {
+    return HEX_CHARS[(n >> 4) & 0x0f] + HEX_CHARS[n & 0x0f];
+  }
+
+  function rgbToHex({ red, green, blue }) {
+    return '#' + byteToHex(red) + byteToHex(green) + byteToHex(blue);
+  }
+
+  function isRgbObject(color) {
+    return (
+      color !== null &&
+      typeof color === 'object' &&
+      'red' in color &&
+      'green' in color &&
+      'blue' in color
+    );
+  }
+
+  function parseColor(color) {
+    if (isRgbObject(color)) {
+      return { red: color.red, green: color.green, blue: color.blue };
+    }
+
+    const hex = color.charAt(0) === '#' ? color.slice(1, 7) : color.slice(0, 6);
     return {
-        generate: _generate
+      red: Number.parseInt(hex.slice(0, 2), 16),
+      green: Number.parseInt(hex.slice(2, 4), 16),
+      blue: Number.parseInt(hex.slice(4, 6), 16),
     };
-}).call(this);
+  }
+
+  function interpolate(begin, end, ratio) {
+    const color = {};
+    for (const key of COLOR_KEYS) {
+      color[key] = (end[key] - begin[key]) * ratio + begin[key];
+    }
+    return color;
+  }
+
+  function generate(opts = {}) {
+    const begin = parseColor(opts.from ?? DEFAULT_BEGIN);
+    const end = parseColor(opts.to ?? DEFAULT_END);
+    const stopCount = opts.stops ?? DEFAULT_STOPS;
+    const segments = Math.max(1, stopCount - 1);
+    const colors = [];
+
+    for (let i = 0; i < segments; i++) {
+      colors.push(rgbToHex(interpolate(begin, end, i / segments)));
+    }
+    colors.push(rgbToHex(end));
+
+    return colors;
+  }
+
+  return { generate };
+})();
 
 console.log(GradientFactory.generate({
-    form: "#000000",
-    to: "#999999",
-    stops: 5
+  from: '#000000',
+  to: '#999999',
+  stops: 8,
 }));
 
 console.log(GradientFactory.generate({
-    from: {
-        red: 192,
-        green: 255,
-        blue: 238
-    },
-    to: {
-        red: 255,
-        green: 255, 
-        blue: 255
-    },
-    stops: 5
+  from: { red: 192, green: 255, blue: 238 },
+  to: { red: 255, green: 255, blue: 255 },
+  stops: 5,
 }));

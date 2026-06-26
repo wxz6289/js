@@ -1,73 +1,81 @@
-const funs = [];
+// 循环中的函数闭包
+//
+// 在循环内创建函数并稍后执行时，函数捕获的是变量的「绑定」，而非某次迭代当时的「值」。
+// 结果取决于循环变量如何声明。
 
-/* 
-// 使用var声明循环变量i,循环里每次迭代同时共享循环变量i,循环内部创建的函数全都保留了对相同变量的引用。
-for (var i = 0; i < 10; i++) {
-  funs.push(function(){
+function run(fns) {
+  fns.forEach((fn) => fn());
+}
+
+// 1. var：同一作用域内只有一个 i，所有闭包共享该绑定
+function demoVar() {
+  const fns = [];
+  for (var i = 0; i < 3; i++) {
+    fns.push(function () {
       console.log(i);
-  })
-}
- */
-
-/* 
- //使用立即执行函数表达式,强制生成计数器变量的副本。
- //在循环内部,IIFE为接收的每一变量i的值都创建了副本并存储为变量value,而这个变量的值就是相应迭代创建的函数所用的值。
- for (var i = 0; i < 10; i++) {
-   funs.push(function(value) {
-       return function(){
-           console.log(value);
-       }
-   }(i));
- }
- */
-
-/* 
- //每次循环let声明都会创建一个新变量i,并将初始化为i的当前值,所以循环内部创建的每个函数都能够得到属于它们自己的i的值。
- // let声明在循环内部的行为是在标准中专门定义的,它不一定与let的提升特性有关。
- for (let i = 0; i < 10; i++) {
-   funs.push(function() {
-     console.log(i);
-   });
- }
- */
-
-let obj = {
-  name: "King",
-  age: 20
-}
-
-
-let arrs = [1, 2, 3]
-/* 
-
- for (const key in obj) {
-    funs.push(function(){
-        console.log(key);
     });
- }
-
- */
-
-/*  for (const value of arrs) {
-      funs.push(function() {
-        console.log(value);
-      });
- }
-
-funs.forEach(function(fn){
-    fn();
-}); */
-
-for (let i = 0, len = arrs.length; i < len; i++) {
-  if (i == 1) {
-    arrs.push(2);
   }
-  console.log(i, len, arrs.length)
+  run(fns); // 3, 3, 3
 }
 
-let points = [{ x: 1, y: 2 }, { x: 3, y: 4 }]
-let [{ x: x1, y: y1 }, { x: x2, y: y2 }] = points;
-let points2 = [{ x: x1, y: y1 }, { x: x2, y: y2 }];
+// 2. IIFE：每次迭代把当前 i 的值传入，闭包捕获的是参数 value
+function demoIIFE() {
+  const fns = [];
+  for (var i = 0; i < 3; i++) {
+    fns.push((function (value) {
+      return function () {
+        console.log(value);
+      };
+    })(i));
+  }
+  run(fns); // 0, 1, 2
+}
 
-console.log(points == points2);
-console.log(points2)
+// 3. let：每次迭代创建新的块级绑定，闭包各自持有独立的 i
+function demoLet() {
+  const fns = [];
+  for (let i = 0; i < 3; i++) {
+    fns.push(function () {
+      console.log(i);
+    });
+  }
+  run(fns); // 0, 1, 2
+}
+
+// 4. for...in / for...of：const 在每次迭代中同样是新的块级绑定
+function demoForIn() {
+  const obj = { name: 'King', age: 20 };
+  const fns = [];
+  for (const key in obj) {
+    fns.push(function () {
+      console.log(key);
+    });
+  }
+  run(fns); // 'name', 'age'
+}
+
+function demoForOf() {
+  const arrs = [1, 2, 3];
+  const fns = [];
+  for (const value of arrs) {
+    fns.push(function () {
+      console.log(value);
+    });
+  }
+  run(fns); // 1, 2, 3
+}
+
+console.log('--- var ---');
+demoVar();
+
+console.log('--- IIFE ---');
+demoIIFE();
+
+console.log('--- let ---');
+demoLet();
+
+console.log('--- for...in (const) ---');
+demoForIn();
+
+console.log('--- for...of (const) ---');
+demoForOf();
