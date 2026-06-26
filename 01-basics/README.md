@@ -4,8 +4,12 @@ JavaScript 语言基础笔记与实践代码。
 
 ```
 01-basics/
-├── docs/    # 学习笔记
-└── code/    # 可运行示例（27 个）
+├── docs/           # 学习笔记
+└── code/           # 可运行示例（23 个）
+    ├── grammar.js
+    ├── variables/  # 声明、作用域、闭包
+    ├── types/      # 内置类型、JSON、日期
+    └── statements/ # 条件、跳转、with
 ```
 
 ## 文档（docs/）
@@ -20,27 +24,51 @@ JavaScript 语言基础笔记与实践代码。
 
 ## 代码（code/）
 
-| 主题 | 文件 | 说明 |
-|------|------|------|
-| 词法 | [grammar.js](code/grammar.js) | eval 与隐式返回值 |
-| 变量 | [global.js](code/global.js) | 全局变量 |
-| 变量 | [fn-in-loop.js](code/fn-in-loop.js) | 循环中的函数 |
-| 变量 | [let-for.js](code/let-for.js) | for 循环与 let |
-| 变量 | [var-var.js](code/var-var.js) 等 | var / let / for 对比（`var-*.js`） |
-| 类型 | [getType.js](code/getType.js) | 类型检测 |
-| 类型 | [typeof-var.js](code/typeof-var.js) | typeof 与未声明变量 |
-| 类型 | [string.js](code/string.js) | 字符串示例 |
-| 类型 | [bool-*.js](code/bool-or.js) | 布尔转换与技巧 |
-| 类型 | [getLastDayOfMonth.js](code/getLastDayOfMonth.js) | 日期计算 |
-| 类型 | [json-*.js](code/json-parse.js) | JSON 序列化与循环引用 |
-| 类型 | [string-truncate.js](code/string-truncate.js) | 字符串截断 |
-| 语句 | [if-block.js](code/if-block.js) | if 块作用域 |
-| 语句 | [label.js](code/label.js) | 标签语句 |
-| 语句 | [switch-default.js](code/switch-default.js) | switch default |
-| 语句 | [with.js](code/with.js) | with 语句 |
+### 词法
+
+| 文件 | 说明 |
+|------|------|
+| [grammar.js](code/grammar.js) | eval 隐式返回值、原始类型不可扩展 |
+
+### 变量（variables/）
+
+| 文件 | 说明 |
+|------|------|
+| [global.js](code/variables/global.js) | 严格模式下全局变量 |
+| [hoisting.js](code/variables/hoisting.js) | var 提升、函数声明、无块作用域 |
+| [block-scope.js](code/variables/block-scope.js) | let/const 块作用域、默认参数 TDZ |
+| [closure-in-loop.js](code/variables/closure-in-loop.js) | 循环闭包：var / IIFE / let / for...in / for...of |
+
+### 类型（types/）
+
+| 文件 | 说明 |
+|------|------|
+| [getType.js](code/types/getType.js) | 从构造函数提取类型名 |
+| [typeof-tdz.js](code/types/typeof-tdz.js) | typeof 与临时死区 |
+| [string-primitive.js](code/types/string-primitive.js) | 原始类型字符串不可扩展 |
+| [string-methods.js](code/types/string-methods.js) | endsWith / startsWith 参数 |
+| [string-truncate.js](code/types/string-truncate.js) | 字符串截断 |
+| [bool-double-not.js](code/types/bool-double-not.js) | `!!` 布尔转换 |
+| [bool-iif.js](code/types/bool-iif.js) | IIFE 与一元运算符 |
+| [bool-gradient-color.js](code/types/bool-gradient-color.js) | RGB 渐变色生成 |
+| [getLastDayOfMonth.js](code/types/getLastDayOfMonth.js) | 日期计算与相对时间 |
+| [json-parse.js](code/types/json-parse.js) | JSON.parse 与 reviver |
+| [json-circular-ref.js](code/types/json-circular-ref.js) | 循环引用 |
+| [json-stringify-replacer.js](code/types/json-stringify-replacer.js) | replacer 过滤序列化 |
+| [json-stringify-unsafe.js](code/types/json-stringify-unsafe.js) | undefined / 函数的序列化 |
+| [json-toJSON.js](code/types/json-toJSON.js) | 自定义 toJSON |
+
+### 语句（statements/）
+
+| 文件 | 说明 |
+|------|------|
+| [if-block.js](code/statements/if-block.js) | if/else 与块作用域 |
+| [switch-default.js](code/statements/switch-default.js) | switch 穿透与 default 位置 |
+| [label.js](code/statements/label.js) | 标签语句 |
+| [with.js](code/statements/with.js) | with 作用域与声明泄漏 |
 
 运行示例：
 
 ```bash
-node 01-basics/code/grammar.js
+node 01-basics/code/variables/closure-in-loop.js
 ```

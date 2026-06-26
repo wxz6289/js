@@ -6,7 +6,7 @@
 
 ### 01-basics — 语言基础
 
-仅两层子目录：`docs/`（笔记）与 `code/`（示例），文件按主题命名、不再嵌套子目录。
+`docs/`（笔记）与 `code/`（示例）；`code/` 按主题分为 `variables/`、`types/`、`statements/`。
 
 详见 [01-basics/README.md](01-basics/README.md)。
 
