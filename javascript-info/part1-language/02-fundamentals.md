@@ -1,15 +1,5 @@
 # 1.2 JavaScript 基础知识
 
-## Hello World
-
-```html
-<script>
-  alert('Hello World!');
-</script>
-<script src="script.js"></script>
-<script src="script.js" defer></script>
-```
-
 ## 代码结构
 
 - 语句以分号结尾（ASI 会自动插入，但不建议依赖）
@@ -25,6 +15,7 @@ var oldStyle = 'legacy'; // 旧式（函数作用域，有提升）
 ```
 
 **命名规则**：
+
 - 字母、数字、`$`、`_`，首字符不能是数字
 - 驼峰命名 `myVeryLongName`
 - 大小写敏感
@@ -34,6 +25,7 @@ var oldStyle = 'legacy'; // 旧式（函数作用域，有提升）
 ## 数据类型
 
 8种基本类型：
+
 - `number` — 整数和浮点数，`Infinity`/`-Infinity`/`NaN`
 - `bigint` — 任意精度整数，后缀 `n`
 - `string` — 单引号/双引号/反引号（模板字符串 `${...}`）
@@ -159,6 +151,7 @@ let multiline = (a, b) => {      // 多行需大括号+return
   return result;
 };
 ```
+
 - 没有自己的 `this`（继承外层）
 - 没有 `arguments`
 - 不能用作构造函数

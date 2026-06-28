@@ -95,10 +95,10 @@ WASM 基础、AssemblyScript 示例
 - **ch17-工具与扩展** — Babel、TypeScript、打包工具、Linter、Source Map
 
 ### javascript-info — 教程参考（zh.javascript.info）
-按该网站三部分课程体系整理的参考笔记：
-- **part1-language/** — 13 个章节：基础、对象、数据类型、高级函数、原型、类、错误处理、Promise、生成器、模块
-- **part2-browser/** — 6 个章节：Document、事件、UI 事件、表单、加载、其他
-- **part3-extra/** — 7 个章节：框架、二进制数据、网络、存储、动画、Web Components、正则
+按该网站三部分课程体系整理的参考笔记，每部分下为 `NN-主题.md` 扁平文件：
+- **part1-language/** — 13 章：基础、对象、数据类型、高级函数、原型、类、错误处理、Promise、生成器、模块
+- **part2-browser/** — 6 章：Document、事件、UI 事件、表单、加载、其他
+- **part3-extra/** — 7 章：框架、二进制数据、网络、存储、动画、Web Components、正则
 
 ### notebooks — Jupyter 笔记本
 所有 `.nnb` 笔记本文件集中存放，便于浏览
