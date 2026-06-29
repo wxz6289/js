@@ -1,294 +1,237 @@
 /**
- * Promise 实现 遵循promise/A+规范
- * Promise/A+规范译文:
- * https://malcolmyu.github.io/2015/06/12/Promises-A-Plus/#note-4
+ * Promise/A+ 风格实现（学习用，偏经典教程写法）
+ *
+ * @see https://malcolmyu.github.io/2015/06/12/Promises-A-Plus/
+ * @see https://promisesaplus.com/
+ *
+ * 测试：npm i -g promises-aplus-tests && promises-aplus-tests TPromise.js
  */
 
-// promise 三个状态
-const PENDING = "pending";
-const FULFILLED = "fulfilled";
-const REJECTED = "rejected";
+const PENDING = 'pending';
+const FULFILLED = 'fulfilled';
+const REJECTED = 'rejected';
 
-function Promise(excutor) {
-    let that = this; // 缓存当前promise实例对象
-    that.status = PENDING; // 初始状态
-    that.value = undefined; // fulfilled状态时 返回的信息
-    that.reason = undefined; // rejected状态时 拒绝的原因
-    that.onFulfilledCallbacks = []; // 存储fulfilled状态对应的onFulfilled函数
-    that.onRejectedCallbacks = []; // 存储rejected状态对应的onRejected函数
+const isFunction = (fn) => typeof fn === 'function';
 
-    function resolve(value) { // value成功态时接收的终值
-        if (value instanceof Promise) {
-            return value.then(resolve, reject);
-        }
+const passThrough = (value) => value;
 
-        // 为什么resolve 加setTimeout?
-        // 2.2.4规范 onFulfilled 和 onRejected 只允许在 execution context 栈仅包含平台代码时运行.
-        // 注1 这里的平台代码指的是引擎、环境以及 promise 的实施代码。实践中要确保 onFulfilled 和 onRejected 方法异步执行，且应该在 then 方法被调用的那一轮事件循环之后的新执行栈中执行。
-
-        setTimeout(() => {
-            // 调用resolve 回调对应onFulfilled函数
-            if (that.status === PENDING) {
-                // 只能由pedning状态 => fulfilled状态 (避免调用多次resolve reject)
-                that.status = FULFILLED;
-                that.value = value;
-                that.onFulfilledCallbacks.forEach(cb => cb(that.value));
-            }
-        });
-    }
-
-    function reject(reason) { // reason失败态时接收的拒因
-        setTimeout(() => {
-            // 调用reject 回调对应onRejected函数
-            if (that.status === PENDING) {
-                // 只能由pedning状态 => rejected状态 (避免调用多次resolve reject)
-                that.status = REJECTED;
-                that.reason = reason;
-                that.onRejectedCallbacks.forEach(cb => cb(that.reason));
-            }
-        });
-    }
-
-    // 捕获在excutor执行器中抛出的异常
-    // new Promise((resolve, reject) => {
-    //     throw new Error('error in excutor')
-    // })
-    try {
-        excutor(resolve, reject);
-    } catch (e) {
-        reject(e);
-    }
-}
-
-/**
- * resolve中的值几种情况：
- * 1.普通值
- * 2.promise对象
- * 3.thenable对象/函数
- */
-
-/**
- * 对resolve 进行改造增强 针对resolve中不同值情况 进行处理
- * @param  {promise} promise2 promise1.then方法返回的新的promise对象
- * @param  {[type]} x         promise1中onFulfilled的返回值
- * @param  {[type]} resolve   promise2的resolve方法
- * @param  {[type]} reject    promise2的reject方法
- */
-function resolvePromise(promise2, x, resolve, reject) {
-    if (promise2 === x) {  // 如果从onFulfilled中返回的x 就是promise2 就会导致循环引用报错
-        return reject(new TypeError('循环引用'));
-    }
-
-    let called = false; // 避免多次调用
-    // 如果x是一个promise对象 （该判断和下面 判断是不是thenable对象重复 所以可有可无）
-    if (x instanceof Promise) { // 获得它的终值 继续resolve
-        if (x.status === PENDING) { // 如果为等待态需等待直至 x 被执行或拒绝 并解析y值
-            x.then(y => {
-                resolvePromise(promise2, y, resolve, reject);
-            }, reason => {
-                reject(reason);
-            });
-        } else { // 如果 x 已经处于执行态/拒绝态(值已经被解析为普通值)，用相同的值执行传递下去 promise
-            x.then(resolve, reject);
-        }
-        // 如果 x 为对象或者函数
-    } else if (x != null && ((typeof x === 'object') || (typeof x === 'function'))) {
-        try { // 是否是thenable对象（具有then方法的对象/函数）
-            let then = x.then;
-            if (typeof then === 'function') {
-                then.call(x, y => {
-                    if (called) return;
-                    called = true;
-                    resolvePromise(promise2, y, resolve, reject);
-                }, reason => {
-                    if (called) return;
-                    called = true;
-                    reject(reason);
-                })
-            } else { // 说明是一个普通对象/函数
-                resolve(x);
-            }
-        } catch (e) {
-            if (called) return;
-            called = true;
-            reject(e);
-        }
-    } else {
-        resolve(x);
-    }
-}
-
-/**
- * [注册fulfilled状态/rejected状态对应的回调函数]
- * @param  {function} onFulfilled fulfilled状态时 执行的函数
- * @param  {function} onRejected  rejected状态时 执行的函数
- * @return {function} newPromsie  返回一个新的promise对象
- */
-Promise.prototype.then = function (onFulfilled, onRejected) {
-    const that = this;
-    let newPromise;
-    // 处理参数默认值 保证参数后续能够继续执行
-    onFulfilled =
-        typeof onFulfilled === "function" ? onFulfilled : value => value;
-    onRejected =
-        typeof onRejected === "function" ? onRejected : reason => {
-            throw reason;
-        };
-
-    // then里面的FULFILLED/REJECTED状态时 为什么要加setTimeout ?
-    // 原因:
-    // 其一 2.2.4规范 要确保 onFulfilled 和 onRejected 方法异步执行(且应该在 then 方法被调用的那一轮事件循环之后的新执行栈中执行) 所以要在resolve里加上setTimeout
-    // 其二 2.2.6规范 对于一个promise，它的then方法可以调用多次.（当在其他程序中多次调用同一个promise的then时 由于之前状态已经为FULFILLED/REJECTED状态，则会走的下面逻辑),所以要确保为FULFILLED/REJECTED状态后 也要异步执行onFulfilled/onRejected
-
-    // 其二 2.2.6规范 也是resolve函数里加setTimeout的原因
-    // 总之都是 让then方法异步执行 也就是确保onFulfilled/onRejected异步执行
-
-    // 如下面这种情景 多次调用p1.then
-    // p1.then((value) => { // 此时p1.status 由pedding状态 => fulfilled状态
-    //     console.log(value); // resolve
-    //     // console.log(p1.status); // fulfilled
-    //     p1.then(value => { // 再次p1.then 这时已经为fulfilled状态 走的是fulfilled状态判断里的逻辑 所以我们也要确保判断里面onFuilled异步执行
-    //         console.log(value); // 'resolve'
-    //     });
-    //     console.log('当前执行栈中同步代码');
-    // })
-    // console.log('全局执行栈中同步代码');
-    //
-
-    if (that.status === FULFILLED) { // 成功态
-        return newPromise = new Promise((resolve, reject) => {
-            setTimeout(() => {
-                try {
-                    let x = onFulfilled(that.value);
-                    resolvePromise(newPromise, x, resolve, reject); // 新的promise resolve 上一个onFulfilled的返回值
-                } catch (e) {
-                    reject(e); // 捕获前面onFulfilled中抛出的异常 then(onFulfilled, onRejected);
-                }
-            });
-        })
-    }
-
-    if (that.status === REJECTED) { // 失败态
-        return newPromise = new Promise((resolve, reject) => {
-            setTimeout(() => {
-                try {
-                    let x = onRejected(that.reason);
-                    resolvePromise(newPromise, x, resolve, reject);
-                } catch (e) {
-                    reject(e);
-                }
-            });
-        });
-    }
-
-    if (that.status === PENDING) { // 等待态
-        // 当异步调用resolve/rejected时 将onFulfilled/onRejected收集暂存到集合中
-        return newPromise = new Promise((resolve, reject) => {
-            that.onFulfilledCallbacks.push((value) => {
-                try {
-                    let x = onFulfilled(value);
-                    resolvePromise(newPromise, x, resolve, reject);
-                } catch (e) {
-                    reject(e);
-                }
-            });
-            that.onRejectedCallbacks.push((reason) => {
-                try {
-                    let x = onRejected(reason);
-                    resolvePromise(newPromise, x, resolve, reject);
-                } catch (e) {
-                    reject(e);
-                }
-            });
-        });
-    }
+const rethrow = (reason) => {
+  throw reason;
 };
 
-/**
- * Promise.all Promise进行并行处理
- * 参数: promise对象组成的数组作为参数
- * 返回值: 返回一个Promise实例
- * 当这个数组里的所有promise对象全部变为resolve状态的时候，才会resolve。
- */
-Promise.all = function (promises) {
-    return new Promise((resolve, reject) => {
-        let done = gen(promises.length, resolve);
-        promises.forEach((promise, index) => {
-            promise.then((value) => {
-                done(index, value)
-            }, reject)
-        })
-    })
-}
+/** 异步执行回调，满足 A+ 2.2.4：onFulfilled/onRejected 应在全新调用栈中运行 */
+const asyncRun = (fn) => setTimeout(fn);
 
-function gen(length, resolve) {
-    let count = 0;
-    let values = [];
-    return function (i, value) {
-        values[i] = value;
-        if (++count === length) {
-            console.log(values);
-            resolve(values);
-        }
+class TPromise {
+  constructor(executor) {
+    this.status = PENDING;
+    this.value = undefined; // fulfilled 终值
+    this.reason = undefined; // rejected 拒因
+    this.onFulfilledCallbacks = [];
+    this.onRejectedCallbacks = [];
+
+    // resolve 接收的 value 可能是：普通值 / Promise 实例 / thenable
+    const resolve = (value) => {
+      if (value instanceof TPromise) {
+        return value.then(resolve, reject);
+      }
+
+      // resolve/reject 内使用 setTimeout，确保 then 回调异步执行（A+ 2.2.4 / 2.2.6）
+      asyncRun(() => {
+        if (this.status !== PENDING) return;
+        this.status = FULFILLED;
+        this.value = value;
+        this.onFulfilledCallbacks.forEach((cb) => cb(this.value));
+      });
+    };
+
+    const reject = (reason) => {
+      asyncRun(() => {
+        if (this.status !== PENDING) return;
+        this.status = REJECTED;
+        this.reason = reason;
+        this.onRejectedCallbacks.forEach((cb) => cb(this.reason));
+      });
+    };
+
+    // executor 同步抛错时，等价于 reject
+    try {
+      executor(resolve, reject);
+    } catch (err) {
+      reject(err);
     }
-}
+  }
 
-/**
- * Promise.race
- * 参数: 接收 promise对象组成的数组作为参数
- * 返回值: 返回一个Promise实例
- * 只要有一个promise对象进入 FulFilled 或者 Rejected 状态的话，就会继续进行后面的处理(取决于哪一个更快)
- */
-Promise.race = function (promises) {
-    return new Promise((resolve, reject) => {
-        promises.forEach((promise, index) => {
-            promise.then(resolve, reject);
+  /**
+   * @param {Function} onFulfilled fulfilled 时执行
+   * @param {Function} onRejected  rejected 时执行
+   * @returns {TPromise} 新 Promise（promise2）
+   */
+  then(onFulfilled, onRejected) {
+    onFulfilled = isFunction(onFulfilled) ? onFulfilled : passThrough;
+    onRejected = isFunction(onRejected) ? onRejected : rethrow;
+
+    // 已决议时也要 setTimeout，保证多次 then 及链式调用中的回调均为异步（A+ 2.2.6）
+    if (this.status === FULFILLED) {
+      const promise2 = new TPromise((resolve, reject) => {
+        asyncRun(() => {
+          try {
+            const x = onFulfilled(this.value);
+            resolvePromise(promise2, x, resolve, reject);
+          } catch (err) {
+            reject(err);
+          }
         });
-    });
-}
+      });
+      return promise2;
+    }
 
-// 用于promise方法链时 捕获前面onFulfilled/onRejected抛出的异常
-Promise.prototype.catch = function (onRejected) {
+    if (this.status === REJECTED) {
+      const promise2 = new TPromise((resolve, reject) => {
+        asyncRun(() => {
+          try {
+            const x = onRejected(this.reason);
+            resolvePromise(promise2, x, resolve, reject);
+          } catch (err) {
+            reject(err);
+          }
+        });
+      });
+      return promise2;
+    }
+
+    // pending：暂存回调，待 resolve/reject 后统一触发
+    const promise2 = new TPromise((resolve, reject) => {
+      this.onFulfilledCallbacks.push((value) => {
+        try {
+          const x = onFulfilled(value);
+          resolvePromise(promise2, x, resolve, reject);
+        } catch (err) {
+          reject(err);
+        }
+      });
+      this.onRejectedCallbacks.push((reason) => {
+        try {
+          const x = onRejected(reason);
+          resolvePromise(promise2, x, resolve, reject);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    });
+    return promise2;
+  }
+
+  /** 捕获链上 rejected 状态 */
+  catch(onRejected) {
     return this.then(null, onRejected);
-}
+  }
 
-Promise.resolve = function (value) {
-    return new Promise(resolve => {
-        resolve(value);
+  /** 全部 fulfill 后 resolve 为结果数组 */
+  static all(promises) {
+    return new TPromise((resolve, reject) => {
+      const len = promises.length;
+      if (len === 0) return resolve([]);
+
+      const values = new Array(len);
+      let count = 0;
+
+      promises.forEach((item, index) => {
+        TPromise.resolve(item).then(
+          (value) => {
+            values[index] = value;
+            if (++count === len) resolve(values);
+          },
+          reject,
+        );
+      });
     });
-}
+  }
 
-Promise.reject = function (reason) {
-    return new Promise((resolve, reject) => {
-        reject(reason);
+  /** 第一个 settle 的结果决定最终状态 */
+  static race(promises) {
+    return new TPromise((resolve, reject) => {
+      promises.forEach((item) => {
+        TPromise.resolve(item).then(resolve, reject);
+      });
     });
-}
+  }
 
-/**
- * 基于Promise实现Deferred的
- * Deferred和Promise的关系
- * - Deferred 拥有 Promise
- * - Deferred 具备对 Promise的状态进行操作的特权方法（resolve reject）
- *
- *参考jQuery.Deferred
- *url: http://api.jquery.com/category/deferred-object/
- */
-Promise.deferred = function () { // 延迟对象
-    let defer = {};
-    defer.promise = new Promise((resolve, reject) => {
-        defer.resolve = resolve;
-        defer.reject = reject;
+  static resolve(value) {
+    return new TPromise((resolve) => resolve(value));
+  }
+
+  static reject(reason) {
+    return new TPromise((_, reject) => reject(reason));
+  }
+
+  /**
+   * Deferred：持有 promise，并暴露 resolve/reject 特权方法
+   * @see http://api.jquery.com/category/deferred-object/
+   */
+  static deferred() {
+    const defer = {};
+    defer.promise = new TPromise((resolve, reject) => {
+      defer.resolve = resolve;
+      defer.reject = reject;
     });
     return defer;
+  }
 }
 
 /**
- * Promise/A+规范测试
- * npm i -g promises-aplus-tests
- * promises-aplus-tests Promise.js
+ * 解析 then 回调返回值 x（promise2 的决议过程）
+ * @param {TPromise} promise2 then 返回的新 Promise
+ * @param {*} x onFulfilled/onRejected 的返回值
+ * @param {Function} resolve promise2 的 resolve
+ * @param {Function} reject promise2 的 reject
  */
+function resolvePromise(promise2, x, resolve, reject) {
+  // 返回 promise2 自身会导致循环引用
+  if (promise2 === x) {
+    return reject(new TypeError('循环引用'));
+  }
 
-try {
-    module.exports = Promise
-} catch (e) {
+  if (x instanceof TPromise) {
+    if (x.status === PENDING) {
+      x.then(
+        (y) => resolvePromise(promise2, y, resolve, reject),
+        reject,
+      );
+    } else {
+      x.then(resolve, reject);
+    }
+    return;
+  }
+
+  if (x != null && (typeof x === 'object' || typeof x === 'function')) {
+    let called = false;
+    try {
+      const then = x.then;
+      if (isFunction(then)) {
+        then.call(
+          x,
+          (y) => {
+            if (called) return;
+            called = true;
+            resolvePromise(promise2, y, resolve, reject);
+          },
+          (reason) => {
+            if (called) return;
+            called = true;
+            reject(reason);
+          },
+        );
+      } else {
+        resolve(x);
+      }
+    } catch (err) {
+      if (!called) reject(err);
+    }
+    return;
+  }
+
+  resolve(x);
 }
+
+export default TPromise;

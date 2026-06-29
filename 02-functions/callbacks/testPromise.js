@@ -1,167 +1,187 @@
-/* 
-const promise = new Promise((resolve, reject) => {
-    console.log(1);
-    resolve();
-    console.log(2);
-});
-
-promise.then(() => {
-    console.log(3)
-});
-
-console.log(4);  
-*/
-/* 
-const promise = new Promise((resolve, reject) => {
-    setTimeout(() => {
-        resolve("success");
-    },1000);
-});
-
-const promise2 = promise.then((value) => {
-    console.log(value);
-    throw new Error("error!");
-});
-
-console.log(promise);
-console.log(promise2);
-
-setTimeout(()=> {
-    console.log("promise", promise);
-    console.log("promise1", promise2);
-}, 2000); */
-
-/* 
-// promise的状态发生了变化就不能再变
-const promise = new Promise((resolve, reject) => {
-    resolve("success1");
-    reject("error");
-    resolve("success2");
-});
-
-promise
-.then((res) => {
-    console.log("then", res);
-})
-.catch((err) => {
-    console.error("catch", err);
-}); 
-*/
-
-/* Promise.resolve(1)
-.then((res) => {
-    console.log(res);
-    return 2;
-})
-.catch((err) => {
-    console.log(err);
-})
-.then((res) => {
-    console.log(res);
-}) */
-/* 
-const promise = new Promise((resolve, reject) => {
-    setTimeout(() => {
-        console.log("once");
-        resolve("success");
-    }, 1000);
-})
-
-const start = Date.now();
-promise.then((res) => {
-    console.log(res, Date.now() - start);
-});
-
-promise.then((res) => {
-    console.log(res, Date.now() - start);
-});
-
+/**
+ * Promise 行为示例集
+ *
+ * 运行全部：node testPromise.js
+ * 运行单项：node testPromise.js <name>
+ *
+ * 分类
+ * - sync-order          同步代码与微任务执行顺序
+ * - async-chain         异步 resolve 与链式返回
+ * - immutable-state     状态只能变更一次
+ * - chain-return        then 返回值参与下一次 then
+ * - multi-then          同一 Promise 注册多个 then
+ * - reject-in-then      then 中 reject / throw
+ * - circular-return     返回 promise 自身导致循环引用
+ * - value-pass-through  非函数参数的值穿透
+ * - catch-vs-then-fail  then 第二参数无法捕获第一参数抛错
+ * - then-two-handlers   已决议后 then 的双参数行为
+ * - macro-micro-tasks   宏任务与微任务（Node）
  */
 
- /* Promise.resolve()
- .then(() => {
-    // throw new Error("error!");
-     return Promise.reject(new Error("error!"))
-    // return new Error("error!");
- })
- .then((res) => {
-     console.log("then", res);
- })
- .catch((err) => {
-    console.error("catch", err);
- }) */
-/* 
-then和catch的返回值不能是本身，否则会造成死循环。
- const promise = Promise.resolve()
-    .then((value) => {
-        console.log(value);
-        return promise;
+const demos = {
+  /** 1 → 2 → 4 → 3：executor 同步执行，then 回调进微任务队列 */
+  async 'sync-order'() {
+    console.log('\n[sync-order]');
+    const promise = new Promise((resolve) => {
+      console.log(1);
+      resolve();
+      console.log(2);
     });
+    promise.then(() => console.log(3));
+    console.log(4);
+    await promise;
+  },
 
-promise.catch(console.error) */
-
-/* 
-// then和catch期望的是函数，如果不是则会发生值穿透
-Promise.resolve(1)
-    .then(2)
-    .then(Promise.resolve(3))
-    .then(console.log) 
-*/
-
-/* 
- // catch是then的一种简写,但是then的第一个参数抛出的错误并不能在第二参数里捕获，只能在后续的then或catch中捕获
-Promise.resolve()
-    .then(function success(res){
-        throw new Error("error");
-    },
-    function fail(e){
-        console.error("fail:", e);
-    })
-    .catch(function fail2(e){
-        console.error("fail2: ", e);
-    }) */
-
-/* 
-    Promise.resolve()
-    .then(function success1(res){
-        throw new Error("error");
-    },function fail1(err){
-        console.error("fail1: ", e);
-    })
-    .then(function success2(res){
-        console.log("success2: ", res);
-    }, function fail2(err) {
-        console.log("fail2: ", err)
-    }) */
-
-
-/* 
-Macrotasks和Microtasks 都属于上述的异步任务中的一种，他们分别有如下API：
-macrotasks: setTimeout, setInterval, setImmediate, I / O, UI rendering
-microtasks: process.nextTick, Promise, MutationObserver
-process.nextTick与promise.then属于microtask,而setImmediate属于macrotask,在事件循环的每个阶段macrotask都会执行microtask.
-任务队列中，在每一次事件循环中，macrotask只会提取一个执行，而microtask会一直提取，直到microsoft队列为空为止。
-也就是说如果某个microtask任务被推入到执行中，那么当主线程任务执行完成后，会循环调用该队列任务中的下一个任务来执行，直到该任务队列到最后一个任务为止。而事件循环每次只会入栈一个macrotask, 主线程执行完成该任务后又会检查microtasks队列并完成里面的所有任务后再执行macrotask的任务。
-
- */
-   
-    process.nextTick(() => {
-        console.log("nextTick");
-    })
-
-
-
-    setTimeout(() => {
-        console.log("timeout");
-    }, 0);
-
-    Promise.resolve()
-    .then(() => {
-        console.log("then");
+  /** resolve 后链式 then；then 内 throw 使后续变为 rejected */
+  async 'async-chain'() {
+    console.log('\n[async-chain]');
+    const p1 = new Promise((resolve) => {
+      setTimeout(() => resolve('success'), 200);
     });
-
-    setImmediate(() => {
-        console.log("setImmediate")
+    const p2 = p1.then((value) => {
+      console.log('value:', value);
+      throw new Error('error!');
     });
+    console.log('p1 pending?', p1);
+    console.log('p2 pending?', p2);
+    await sleep(400);
+    console.log('p1 settled:', p1);
+    console.log('p2 settled:', p2);
+    await p2.catch((err) => console.log('caught:', err.message));
+  },
 
-    console.log("end");
+  /** 首次 resolve/reject 后，后续调用被忽略 */
+  async 'immutable-state'() {
+    console.log('\n[immutable-state]');
+    const promise = new Promise((resolve, reject) => {
+      resolve('success1');
+      reject(new Error('error'));
+      resolve('success2');
+    });
+    await promise
+      .then((res) => console.log('then:', res))
+      .catch((err) => console.error('catch:', err.message));
+  },
+
+  /** then 返回普通值，传递给链上下一个 then */
+  async 'chain-return'() {
+    console.log('\n[chain-return]');
+    await Promise.resolve(1)
+      .then((res) => {
+        console.log(res);
+        return 2;
+      })
+      .catch((err) => console.log(err))
+      .then((res) => console.log(res));
+  },
+
+  /** 同一 Promise 可多次 then，回调均会执行 */
+  async 'multi-then'() {
+    console.log('\n[multi-then]');
+    const promise = new Promise((resolve) => {
+      setTimeout(() => {
+        console.log('once');
+        resolve('success');
+      }, 200);
+    });
+    const start = Date.now();
+    promise.then((res) => console.log(res, Date.now() - start));
+    promise.then((res) => console.log(res, Date.now() - start));
+    await promise;
+  },
+
+  /** return Promise.reject() 等价于抛出 rejection */
+  async 'reject-in-then'() {
+    console.log('\n[reject-in-then]');
+    await Promise.resolve()
+      .then(() => {
+        throw new Error('error!');
+      })
+      .then((res) => console.log('then:', res))
+      .catch((err) => console.error('catch:', err.message));
+  },
+
+  /** then 返回值不能是链上的 promise 自身 */
+  async 'circular-return'() {
+    console.log('\n[circular-return]');
+    const promise = Promise.resolve().then(() => promise);
+    await promise.catch((err) => console.error('catch:', err.message));
+  },
+
+  /** 非函数参数被忽略，值向下穿透 */
+  async 'value-pass-through'() {
+    console.log('\n[value-pass-through]');
+    await Promise.resolve(1)
+      .then(2)
+      .then(Promise.resolve(3))
+      .then(console.log);
+  },
+
+  /** catch 是 then(null, onRejected)；then 第二参数无法捕获第一参数内的 throw */
+  async 'catch-vs-then-fail'() {
+    console.log('\n[catch-vs-then-fail]');
+    await Promise.resolve()
+      .then(
+        () => {
+          throw new Error('error');
+        },
+        (e) => console.error('fail (skipped):', e.message),
+      )
+      .catch((e) => console.error('catch:', e.message));
+  },
+
+  /** 已决议的 Promise 上，then 双参数分别处理 fulfill / reject */
+  async 'then-two-handlers'() {
+    console.log('\n[then-two-handlers]');
+    await Promise.resolve()
+      .then(
+        () => {
+          throw new Error('error');
+        },
+        (err) => console.error('fail1:', err.message),
+      )
+      .then(
+        (res) => console.log('success2:', res),
+        (err) => console.log('fail2:', err.message),
+      );
+  },
+
+  /**
+   * Node 事件循环：同步 → microtask(Promise) → microtask(nextTick) → macrotask
+   * 典型顺序：end → then → nextTick → timeout → setImmediate
+   */
+  async 'macro-micro-tasks'() {
+    console.log('\n[macro-micro-tasks]');
+    process.nextTick(() => console.log('nextTick'));
+    setTimeout(() => console.log('timeout'), 0);
+    Promise.resolve().then(() => console.log('then'));
+    setImmediate(() => console.log('setImmediate'));
+    console.log('end');
+    await sleep(50);
+  },
+};
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function printUsage() {
+  console.log('Promise 示例集');
+  console.log('用法: node testPromise.js [name]\n');
+  Object.keys(demos).forEach((name) => console.log(`  ${name}`));
+}
+
+const example = process.argv[2];
+
+if (!example) {
+  printUsage();
+  for (const run of Object.values(demos)) {
+    await run();
+  }
+} else if (demos[example]) {
+  await demos[example]();
+} else {
+  console.error(`未知示例: ${example}\n`);
+  printUsage();
+  process.exit(1);
+}

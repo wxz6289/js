@@ -6,7 +6,7 @@ function showCircle(cx, cy, radius, callback){
         drawCircle(cx, cy, r);
         if(r <= radius){
             setTimeout(() => {
-                drawCircle(cx, cy, r); 
+                drawCircle(cx, cy, r);
             }, 100);
         } else {
             callback(ctx);
@@ -20,7 +20,7 @@ function showCircle(cx, cy, radius, callback){
     }
 }
 
-function showCircle(){
+function testShowCircle(){
     showCircle(150, 150, 100, (ctx) => {
         ctx.fillText("Hello, World", 50, 50)
     });
