@@ -16,3 +16,4 @@ function getFunc() {
 }
 
 getFunc()();
+

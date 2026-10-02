@@ -14,7 +14,9 @@ function f() {
   return g;
 }
 
-f()(); // the closest value
+f()();
+let g = f();
+g();
 
 console.log('--- IIFE 与外层作用域 ---');
 

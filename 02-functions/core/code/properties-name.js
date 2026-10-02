@@ -6,13 +6,15 @@ var a = function b() {
 
 console.log(a.name); // b
 
-var e = function () {};
+var e = function () { };
 console.log(e.name); // e
 
-function c() {}
+function c() { }
 console.log(c.name); // c
 
 var f = {
-  e: function f() {},
+  e: function f() { },
+  h: function () { }
 };
-console.log(f.e.name); // e
+console.log(f.e.name); // f
+console.log(f.h.name);

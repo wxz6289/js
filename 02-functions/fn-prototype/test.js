@@ -11,7 +11,9 @@ Rabbit.prototype = animal;
 let rabbit = new Rabbit("White Rabbit"); //  rabbit.__proto__ == animal
 
 console.log(rabbit.eats); // true */
-/* 
+
+
+/*
 function Rabbit(name) {
     this.name = name;
 }
@@ -46,8 +48,9 @@ let rabbit = new Rabbit();
 delete Rabbit.prototype.eats;
 
 console.log(rabbit.eats); // true */
-/* 
-function Rabbit(name){
+
+/*
+function Rabbit(name) {
     this.name = name
 }
 
@@ -62,46 +65,40 @@ let v = new w.constructor("Black");
 
 console.log(v.name); */
 
-/* let obj = {};
+/*
+let obj = {};
 console.log(obj);
 console.log(obj.__proto__ === Object.prototype);
-console.log(Object.prototype.__proto__); */
+console.log(Object.prototype.__proto__);
+*/
 
 /* let arr = [1, 2, 3];
 console.log(arr.__proto__ === Array.prototype);
 console.log(arr.__proto__.__proto__ === Object.prototype);
-console.log(arr.__proto__.__proto__.__proto__);
- */
+console.log(arr.__proto__.__proto__.__proto__); */
 
-/* Function.prototype.defer = function(ms){
+/*
+Function.prototype.defer = function (ms) {
     setTimeout(this, ms);
 }
 
-function f(){
+function f() {
     console.log("Hello");
 }
 
-f.defer(1000); */
+f.defer(1000);
+ */
 
-function f(a, b){
+function f(a, b) {
     console.log(a + b);
 }
 
-Function.prototype.defer = function(ms){
+Function.prototype.defer = function (ms) {
     let self = this;
-    return function(){
+    return function () {
         setTimeout(self, ms, ...arguments);
     }
 }
 
 f.defer(1000)(1, 2)
-
-
-
-
-
-
-
-
-
 

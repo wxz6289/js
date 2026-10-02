@@ -1,6 +1,6 @@
 // 递归引用：this、具名内联函数、arguments.callee
 
-const ninja = {
+let ninja = {
   // 使用 this 引用方法自身（推荐）
   chirpWithThis: function (n) {
     return n === 1 ? 'chirp' : this.chirpWithThis(n - 1) + '-chirp';
@@ -18,7 +18,7 @@ const ninja = {
 };
 
 const backup = ninja;
-// ninja = {}; // 解引用后 arguments.callee 仍可工作，this 写法在解绑后会失败
+ninja = {}; // 解引用后 arguments.callee 仍可工作，this 写法在解绑后会失败
 
 console.log(backup.chirpWithThis(3));
 console.log(backup.chirp2(3));

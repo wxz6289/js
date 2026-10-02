@@ -23,7 +23,7 @@ function trace(o, methodName) {
   o[methodName] = function (...args) {
     console.log('Enter:', methodName);
     const result = original.apply(this, args);
-    console.log('Exit:', methodName);
+    console.log('Exit:', methodName, " with result:", result);
     return result;
   };
 }

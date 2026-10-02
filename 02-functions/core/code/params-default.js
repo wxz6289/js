@@ -69,6 +69,7 @@ function demoNonTailDefault() {
     return [x, y];
   }
   // f(); // TypeError
+  console.log(f())
   console.log(f(2));           // [2, undefined]
   console.log(f(undefined, 1)); // [1, 1]
 }

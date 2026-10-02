@@ -15,9 +15,10 @@ function wordsChain(word) {
 
 const ws = wordsChain('胸有成竹')('竹报平安')('安富尊荣');
 console.log(String(ws)); // 胸有成竹->竹报平安->安富尊荣
+// console.log(ws);
 
 // 原型链式 API（jquery 风格）
-function Person() {}
+function Person() { }
 Person.prototype.set = function (age) {
   this.age = age;
   return this;

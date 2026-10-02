@@ -5,6 +5,7 @@ function checkArgs(a, ...args) {
   console.log('args:', args);
   args[0] = 'A';
   console.log('修改 args 后 arguments:', [...arguments]);
+  console.log(args);
 }
 
 checkArgs(12, 10);
@@ -13,6 +14,7 @@ function add(...values) {
   return values.reduce((sum, v) => sum + v, 0);
 }
 console.log('add:', add(2, 5, 3));
+console.log('add 0', add());
 
 function sortWithSpread(...numbers) {
   return numbers.sort((a, b) => a - b);

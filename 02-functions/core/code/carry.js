@@ -5,11 +5,16 @@
     };
 } */
 
+/*
+作用：创建一个已经设置好了一个或多个参数的函数。
+实现：调用另一个函数并为它传入要柯里化的函数和必要参数。
+*/
+
 function curry(fn, ctx, ...outerArgs) {
     return fn.bind(ctx, ...outerArgs)
 }
 
-function multiply(x, y, z){
+function multiply(x, y, z) {
     return x * y * z;
 }
 
