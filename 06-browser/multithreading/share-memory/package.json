@@ -2,7 +2,7 @@
 	"type": "module",
 	"dependencies": {
 		"autocannon": "^7.15.0",
-		"msgpack5": "^6.0.2",
+		"msgpack5": "^6.1.0",
 		"serve": "^14.2.3"
 	}
 }
